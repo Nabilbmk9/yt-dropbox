@@ -1,0 +1,8 @@
+.DS_STORE
+__pycache__/
+token files/
+code_secret_client_youtube.json
+Video/
+Podcast/
+Output/
+Thumbnail/

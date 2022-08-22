@@ -6,6 +6,7 @@ from flux_rss import tags_list_flux_rss, description_flux_rss
 from googleapiclient.http import MediaFileUpload
 from google_apis import create_service
 import socket
+from pprint import pprint
 socket.setdefaulttimeout(30000)
 
 CLIENT_SECRET_FILE = "code_secret_client_youtube.json"
@@ -76,23 +77,8 @@ def retrieve_playlist_videos(playlist_id):
         playlistId=playlist_id,
         maxResults=50
     ).execute()
-    if 1 > response.get('pageInfo').get('totalResults'):
-        return
-    else:
-        items = response.get('items')
-        nextPageToken = response.get('nextPageToken')
-
-        while nextPageToken:
-            response_next_page = service.playlistItems().list(
-                part='snippet,status',
-                playlistId=playlist_id,
-                maxResults=50,
-                pageToken=nextPageToken
-            )
-            print(nextPageToken)
-            items.extends(response_next_page.get(items))
-            nextPageToken = response_next_page.get('nextPageToken')
-        return items
+    items = response.get('items')
+    return items
 
 
 def retrieve_status_videos(video_id):
@@ -101,23 +87,8 @@ def retrieve_status_videos(video_id):
         id=video_id,
         maxResults=50
     ).execute()
-    if 1 > response.get('pageInfo').get('totalResults'):
-        return
-    else:
-        items = response.get('items')
-        nextPageToken = response.get('nextPageToken')
-
-        while nextPageToken:
-            response_next_page = service.playlistItems().list(
-                part='liveStreamingDetails',
-                id=video_id,
-                maxResults=50,
-                pageToken=nextPageToken
-            )
-            print(nextPageToken)
-            items.extends(response_next_page.get(items))
-            nextPageToken = response_next_page.get('nextPageToken')
-        return items
+    items = response.get('items')
+    return items
 
 
 def retrieve_lastest_title_and_date_video():

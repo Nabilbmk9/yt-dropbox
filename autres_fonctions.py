@@ -15,13 +15,15 @@ def publish_next_day_at_6(from_this_date):
     return date_de_publication
 
 
-def pending_podcasts(liste_podact_dropbox, last_youtube_video_posted):
+def pending_podcasts(liste_podcast_dropbox, last_youtube_video_posted):
     """Donner en argument, la liste de podcast disponible sur dropbox et la derniere video youtube
         Retourne l'indice du dernier podcast posté sur youtube"""
-    for indice, x in enumerate(liste_podact_dropbox['name']):
-        if last_youtube_video_posted in x:
-            return indice
-    return None
+    if liste_podcast_dropbox is None:
+        return 0
+    for iterator, nom_podcast in enumerate(liste_podcast_dropbox['name']):
+        if last_youtube_video_posted in nom_podcast:
+            return iterator
+    return iterator
 
 
 def delete_files_in_folder(list_folder):

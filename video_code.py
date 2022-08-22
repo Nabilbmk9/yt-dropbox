@@ -44,14 +44,7 @@ def clip_transition_foudu(path_fodler, titre_video):
 
 
 def type_de_video_par_mot_cle(liste_titre_podcast):
-    """"""
-    dossier_mot_cle = {"paix": "Nature",
-                       "sommeil": "Sommeil",
-                       "pause": "Cloud",
-                       "rapprocher": "Nature",
-                       "être": "Nature",
-                       "conscience": "Nature",
-                       "dormir": "Sommeil"}
+    dossier_mot_cle = {}
 
     for mot in liste_titre_podcast:
         if dossier_mot_cle.get(mot) is not None:

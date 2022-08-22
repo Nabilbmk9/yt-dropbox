@@ -8,7 +8,6 @@ import moviepy.editor as me
 from youtube_code import telecharger_sur_youtube, retrieve_lastest_title_and_date_video
 from autres_fonctions import publish_next_day_at_6, pending_podcasts, delete_files_in_folder
 
-
 BASE_DIR = Path().cwd()
 today = datetime.now().replace(microsecond=0)
 
@@ -20,21 +19,21 @@ while run :
     publication_date = publish_next_day_at_6(last_video_programmed_date)
 
     # Récupérer la liste des podcasts sur dropbox
-    liste_podact_dropbox = dropbox_list_files("/Podcast")
+    liste_podcast_dropbox = dropbox_list_files("/Podcast")
 
     # Nombre de podcast en attente
-    pending_podcast = pending_podcasts(liste_podact_dropbox, last_youtube_video_posted)
+    pending_podcast = pending_podcasts(liste_podcast_dropbox, last_youtube_video_posted)
     print(f"Il y a {pending_podcast} en attente")
 
     # S'il n'y a pas de nouveau podcast. Pause de 12h
-    if pending_podcasts(liste_podact_dropbox, last_youtube_video_posted) == 0:
+    if pending_podcasts(liste_podcast_dropbox, last_youtube_video_posted) == 0:
         print("Pas de nouveau podcast. Pause de 12h")
         time.sleep(43200)
 
     else:
         print(f"Il y a {pending_podcast} podcast en attente")
-        podcast_to_download = "".join(list(liste_podact_dropbox.iloc[pending_podcast-1]['name']))
-        titre_video_a_upload = "".join(list(liste_podact_dropbox.iloc[pending_podcast-1]['name']))[13:-4]
+        podcast_to_download = "".join(list(liste_podcast_dropbox.iloc[pending_podcast-1]['name']))
+        titre_video_a_upload = "".join(list(liste_podcast_dropbox.iloc[pending_podcast-1]['name']))[13:-4]
 
         # Télécharger le podcast dans dossier nomer "Podcast"
         os.makedirs("Podcast", exist_ok=True)
