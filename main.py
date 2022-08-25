@@ -98,5 +98,3 @@ while run :
         liste_de_dossier = ["Podcast", "Video", "Thumbnails", "Output"]
         delete_files_in_folder(liste_de_dossier)
 
-        run = False
-

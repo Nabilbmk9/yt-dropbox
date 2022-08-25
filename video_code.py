@@ -86,10 +86,3 @@ def draw_multiline_in_image(image_path, text, text_color=(255, 255, 255), text_s
         y_text += line_height
 
     image.save(image_path)
-
-
-if __name__ == '__main__':
-    image_from_video(r"C:\Users\boulm\Python_file\MISSION\Youtube_Automation\Output\8 minutes pour se foutre la paix et faire une pause.mp4")
-    draw_multiline_in_image(r"C:\Users\boulm\Python_file\MISSION\Youtube_Automation\Thumbnails\thumb.jpg", "niquez vos grand mere les putes chacaux")
-
-
