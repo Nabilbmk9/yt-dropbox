@@ -12,8 +12,8 @@ if hasattr(ssl, '_create_unverified_context'):
 news_feed = feedparser.parse('https://feed.ausha.co/B6Ad3sAApEzX')
 
 def tags_list_flux_rss():
-    """Retourne les tags du podcast se trouvant le dossier local "tmp" """
-    for x in Path('tmp').iterdir():
+    """Retourne les tags du podcast se trouvant le dossier local "Podcast" """
+    for x in Path('Podcast').iterdir():
         s = x.name
     # Propriétés du flux
     tags = []
@@ -28,8 +28,8 @@ def tags_list_flux_rss():
 
 
 def description_flux_rss():
-    """Retourne les tags du podcast se trouvant le dossier local "tmp" """
-    for x in Path('tmp').iterdir():
+    """Retourne les tags du podcast se trouvant le dossier local "Podcast" """
+    for x in Path('Podcast').iterdir():
         s = x.name
     # Propriétés du flux
     for i in news_feed.entries:

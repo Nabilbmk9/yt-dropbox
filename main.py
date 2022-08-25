@@ -8,6 +8,7 @@ import moviepy.editor as me
 from youtube_code import telecharger_sur_youtube, retrieve_lastest_title_and_date_video
 from autres_fonctions import publish_next_day_at_6, pending_podcasts, delete_files_in_folder
 
+
 BASE_DIR = Path().cwd()
 today = datetime.now().replace(microsecond=0)
 
@@ -20,6 +21,7 @@ while run :
 
     # Récupérer la liste des podcasts sur dropbox
     liste_podcast_dropbox = dropbox_list_files("/Podcast")
+    print(liste_podcast_dropbox)
 
     # Nombre de podcast en attente
     pending_podcast = pending_podcasts(liste_podcast_dropbox, last_youtube_video_posted)
@@ -76,6 +78,7 @@ while run :
 
 
         # Montage des videos
+        os.makedirs("Output", exist_ok=True)
         for x in Path("Podcast").iterdir():
             path_podcast = x
             break

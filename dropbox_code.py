@@ -1,16 +1,22 @@
+import os
 import pathlib
 import pandas as pd
 import dropbox
 from dropbox.exceptions import AuthError
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 BASE_DIR = pathlib.Path().cwd()
+
 
 def dropbox_connect():
     """Create a connection to Dropbox."""
     try:
-        dbx = dropbox.Dropbox(app_key="ly14l65g0zxqweq",
-                              app_secret="787lfgwcp4l5njk",
-                              oauth2_refresh_token="2xa1hVceEEAAAAAAAAAAAQCmEs30WzuRmep_AxZbtXSsq6ewgikLvU6peX-idzqI")
+        dbx = dropbox.Dropbox(app_key=os.environ.get("app_key"),
+                              app_secret=os.environ.get("app_secret"),
+                              oauth2_refresh_token=os.environ.get("oauth2_refresh_token"))
     except AuthError as e:
         print(f'Error connecting to Dropbox with access token: {str(e)}')
     return dbx

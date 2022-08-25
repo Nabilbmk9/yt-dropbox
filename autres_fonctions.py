@@ -23,7 +23,7 @@ def pending_podcasts(liste_podcast_dropbox, last_youtube_video_posted):
     for iterator, nom_podcast in enumerate(liste_podcast_dropbox['name']):
         if last_youtube_video_posted in nom_podcast:
             return iterator
-    return iterator
+    return iterator +1
 
 
 def delete_files_in_folder(list_folder):

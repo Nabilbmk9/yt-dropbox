@@ -6,3 +6,6 @@ Video/
 Podcast/
 Output/
 Thumbnail/
+.venv
+.env
+
