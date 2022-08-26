@@ -2,7 +2,7 @@ import os
 
 import moviepy.editor as me
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import textwrap
 BASE_DIR = Path().cwd()
 
@@ -107,14 +107,22 @@ def draw_multiline_in_image(image_path, text, size_font=100, text_color=TEXT_COL
     overlay = Image.new('RGBA', image.size, BACKGROUND_TINT_COLOR + (0,))
     for line in lines:
         line_width, line_height = font.getsize(line)
-        rectangle_size = ((image_width - line_width) / 2 -20, y_text, ((image_width - line_width) / 2) + line_width+20, y_text + line_height +20)
+
+        # Create piece of canvas to draw text on and blur
+        blurred = Image.new('RGBA', image.size)
+        draw = ImageDraw.Draw(blurred)
+        draw.text(((image_width - line_width) / 2, y_text),
+                  line, fill='black', font=font)
+        blurred = blurred.filter(ImageFilter.BoxBlur(7))
+
+        # Paste soft text onto background
+        image.paste(blurred,blurred)
 
         draw_rect = ImageDraw.Draw(overlay)
-        draw_rect.rectangle(rectangle_size, fill=BACKGROUND_TINT_COLOR+(OPACITY,))
 
         draw_rect.text(((image_width - line_width) / 2, y_text),
                   line, font=font, fill=text_color)
         y_text += line_height
     image = Image.alpha_composite(image, overlay)
     image = image.convert("RGB")
-    image.save(image_path)
+    image.save("result.jpg")
