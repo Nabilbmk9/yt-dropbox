@@ -6,6 +6,12 @@ from PIL import Image, ImageDraw, ImageFont
 import textwrap
 BASE_DIR = Path().cwd()
 
+# Parameter for thumbnail
+BACKGROUND_TINT_COLOR = (0, 0, 0)  # Black
+TRANSPARENCY = .40  # Degree of transparency, 0-100%
+TEXT_COLOR = (255, 255, 255)  # White
+FONT = 'Oswald.ttf'
+
 
 def ajouter_audio_sur_video(path_videoclip, path_audioclip, loop=False):
     """Prend une video et ajoute le son.
@@ -71,18 +77,44 @@ def image_from_video(path_videoclip):
             return new_img_filepath
 
 
-def draw_multiline_in_image(image_path, text, text_color=(255, 255, 255), text_start_height=200):
+def draw_multiline_in_image(image_path, text, size_font=100, text_color=TEXT_COLOR, text_start_height=200):
+    OPACITY = int(255 * TRANSPARENCY)
+    print(len(text))
     image = Image.open(image_path)
-    draw = ImageDraw.Draw(image)
-    font = ImageFont.truetype('Oswald.ttf', 80)
+    image = image.convert("RGBA")
+
+    # Font size according to the number of characters
+    if len(text) < 40:
+        size_font = 120
+    elif len(text) < 50:
+        size_font = 110
+    elif len(text) < 60:
+        size_font = 95
+    else:
+        size_font = 85
+
+    font = ImageFont.truetype(FONT, size_font)
     image_width, image_height = image.size
     y_text = text_start_height
-    lines = textwrap.wrap(text.upper(), width=35)
-    print(lines)
+
+    width_text = 1
+    size_width_text = 0
+    while size_width_text < 1000:
+        width_text += 1
+        lines = textwrap.wrap(text.upper(), width=width_text)
+        size_width_text = font.getsize(lines[0])[0]
+
+    overlay = Image.new('RGBA', image.size, BACKGROUND_TINT_COLOR + (0,))
     for line in lines:
         line_width, line_height = font.getsize(line)
-        draw.text(((image_width - line_width) / 2, y_text),
-                  line, font=font, fill=text_color, stroke_width=2, stroke_fill='black')
-        y_text += line_height
+        rectangle_size = ((image_width - line_width) / 2 -20, y_text, ((image_width - line_width) / 2) + line_width+20, y_text + line_height +20)
 
+        draw_rect = ImageDraw.Draw(overlay)
+        draw_rect.rectangle(rectangle_size, fill=BACKGROUND_TINT_COLOR+(OPACITY,))
+
+        draw_rect.text(((image_width - line_width) / 2, y_text),
+                  line, font=font, fill=text_color)
+        y_text += line_height
+    image = Image.alpha_composite(image, overlay)
+    image = image.convert("RGB")
     image.save(image_path)
