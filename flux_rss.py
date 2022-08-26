@@ -35,11 +35,11 @@ def description_flux_rss():
     for i in news_feed.entries:
         if i['title'] in s:
             description = i['content'][0]['value']
+            if "<p>" in description:
+                description = description.replace("<p>", "")
+            if "</p>" in description:
+                description = description.replace("</p>", "")
             break
-    if "<p>" in description:
-        description = description.replace("<p>", "")
-    if "</p>" in description:
-        description = description.replace("</p>", "")
     return description
 
 if __name__ == '__main__':
