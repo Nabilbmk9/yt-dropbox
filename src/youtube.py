@@ -121,8 +121,10 @@ def get_latest_video_on_yt(playlist_id):
         playlistId=playlist_id,
         maxResults=1
         ).execute()
-    return response.get('items')[0]['snippet']['title']
+    lastest_video = {'title': response['items'][0]['snippet']['title'],
+                     'id': response['items'][0]['snippet']['resourceId']['videoId']}
+    return lastest_video    
     
 
 if __name__ == '__main__':
-    pprint(get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID")))
+    pprint(get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID"))['title'])

@@ -9,4 +9,4 @@ Thumbnails/
 .venv
 .env
 secrets
-
+test.py

@@ -4,13 +4,13 @@ from pathlib import Path
 import moviepy.editor as me
 
 from src.rss import *
-from src.dropbox import *
+from src.dropbox_functions import *
 from src.videos import *
 from src.youtube import *
 from src.helpers import *
 
 
-latest_video_title = get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID")) # -> "The latest video on youtube"
+latest_video_title = get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID"))['title'] # -> "The latest video on youtube"
 
 podcasts_path = os.environ.get("PODCASTS_PATH") # -> "/Podcast"
 new_podcasts = get_new_podcasts(podcasts_path, latest_video_title)
