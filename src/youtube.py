@@ -2,14 +2,18 @@ import os
 from google_auth_oauthlib.flow import InstalledAppFlow
 from datetime import datetime
 from pathlib import Path
-from flux_rss import tags_list_flux_rss, description_flux_rss
+from rss import tags_list_flux_rss, description_flux_rss
 from googleapiclient.http import MediaFileUpload
 from google_apis import create_service
 import socket
 from pprint import pprint
+from dotenv import load_dotenv
+
+load_dotenv("secrets/.env")
+
 socket.setdefaulttimeout(30000)
 
-CLIENT_SECRET_FILE = "code_secret_client_youtube.json"
+CLIENT_SECRET_FILE = "secrets/code_secret_client_youtube.json"
 API_NAME = 'youtube'
 API_VERSION = 'v3'
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload',
@@ -75,10 +79,10 @@ def retrieve_playlist_videos(playlist_id):
     response = service.playlistItems().list(
         part='snippet,status',
         playlistId=playlist_id,
-        maxResults=50
-    ).execute()
-    items = response.get('items')
-    return items
+        maxResults=1
+        ).execute()
+
+    return response.get('items')
 
 
 def retrieve_status_videos(video_id):
@@ -109,8 +113,16 @@ def retrieve_lastest_title_and_date_video():
         break
     return title_video, publish_at
 
+################################################################
+# NEWS FUNCTIONS
+def get_latest_video_on_yt(playlist_id):
+    response = service.playlistItems().list(
+        part='snippet',
+        playlistId=playlist_id,
+        maxResults=1
+        ).execute()
+    return response.get('items')[0]['snippet']['title']
+    
 
 if __name__ == '__main__':
-    publication_date = datetime(year=2022, month=12, day=26, hour=6)
-
-    telecharger_sur_youtube(publication_date, "titre video", r"C:\Users\boulm\Python_file\MISSION\Youtube_Automation\Output\Visual_Studio_Code_-_connection_api.py_-_Publication_Linkedin_-_Visual_Studio_Code_-_10_March_2022.mp4")
+    pprint(get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID")))
