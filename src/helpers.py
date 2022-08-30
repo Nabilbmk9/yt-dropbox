@@ -30,3 +30,10 @@ def delete_files_in_folder(list_folder):
     for dossier in list_folder:
         for fichier in Path(dossier).iterdir():
             Path(fichier).unlink()
+
+
+def remove_html_tags(text):
+    """Remove html tags from a string"""
+    import re
+    clean = re.compile('<.*?>')
+    return re.sub(clean, '', text)

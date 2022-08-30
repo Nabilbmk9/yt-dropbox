@@ -72,7 +72,7 @@ def get_new_podcasts(podcasts_path, latest_video_title):
     for podcast_name, podcast_path in zip(all_podcasts['name'], all_podcasts['path_display']):
         if latest_video_title in podcast_name:
             return new_podcasts
-        new_podcasts.append({'title': podcast_name[13:-4], 'path': podcast_path})
+        new_podcasts.append({'title': podcast_name.split('- ')[1].split(".")[0], 'path': podcast_path})
     
     return new_podcasts
 
