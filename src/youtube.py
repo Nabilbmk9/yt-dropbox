@@ -2,7 +2,7 @@ import os
 from google_auth_oauthlib.flow import InstalledAppFlow
 from datetime import datetime
 from pathlib import Path
-from rss import tags_list_flux_rss, description_flux_rss
+from rss import *
 from googleapiclient.http import MediaFileUpload
 from google_apis import create_service
 import socket

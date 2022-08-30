@@ -3,11 +3,11 @@ from datetime import datetime, timedelta
 from pathlib import Path
 import moviepy.editor as me
 
-from src.rss import *
-from src.dropbox_functions import *
-from src.videos import *
-from src.youtube import *
-from src.helpers import *
+from rss import *
+from dropbox_functions import *
+from videos import *
+from youtube import *
+from helpers import *
 
 
 latest_video_title = get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID"))['title'] # -> "The latest video on youtube"
@@ -18,12 +18,13 @@ new_podcasts = get_new_podcasts(podcasts_path, latest_video_title)
 
 for podcast in new_podcasts:
     podcast['description'] = get_description_from_rss(podcast['title']) 
+    podcast['tags'] = get_tags_from_rss(podcast['title'])
 
 if new_podcasts == []:
     print("No new podcast")
     exit()
 
-print(f"{new_podcasts.lenght} new podcasts found...")
+print(f"{len(new_podcasts)} new podcasts found...")
 
 last_youtube_publication_date = get_last_youtube_publication_date()
 for podcast in new_podcasts:
