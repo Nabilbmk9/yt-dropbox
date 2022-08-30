@@ -75,16 +75,6 @@ channel_response = get_channel_info()
 uploaded_playlist_id = channel_response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
 
 
-def retrieve_playlist_videos(playlist_id):
-    response = service.playlistItems().list(
-        part='snippet,status',
-        playlistId=playlist_id,
-        maxResults=1
-        ).execute()
-
-    return response.get('items')
-
-
 def retrieve_status_videos(video_id):
     response = service.videos().list(
         part='snippet,status,liveStreamingDetails',
@@ -123,8 +113,27 @@ def get_latest_video_on_yt(playlist_id):
         ).execute()
     lastest_video = {'title': response['items'][0]['snippet']['title'],
                      'id': response['items'][0]['snippet']['resourceId']['videoId']}
-    return lastest_video    
-    
+    return lastest_video
+
+
+
+def get_last_youtube_publication_date(last_video_id):
+    today = datetime.now().replace(microsecond=0)
+    videos = retrieve_playlist_videos(uploaded_playlist_id)
+
+    for video_infos in videos:
+        videoId = video_infos['snippet']['resourceId']['videoId']
+        publish_at = retrieve_status_videos(videoId)[0]['status'].get('publishAt')
+        if publish_at is None:
+            return today
+        publish_at = list(publish_at)
+        publish_at = "".join(publish_at[:-1])
+        publish_at = list(publish_at)
+        publish_at = "".join(publish_at)
+        publish_at = datetime.fromisoformat(publish_at)
+        break
+    return publish_at
+
 
 if __name__ == '__main__':
-    pprint(get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID"))['title'])
+    pprint(retrieve_playlist_videos('UUlGxSM88UxJLZ43zdPocIIw'))
