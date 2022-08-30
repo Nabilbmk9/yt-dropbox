@@ -4,9 +4,9 @@ import pandas as pd
 import dropbox
 from dropbox.exceptions import AuthError
 from dotenv import load_dotenv
-import os
+from pprint import pprint
 
-load_dotenv()
+load_dotenv(".env")
 
 BASE_DIR = pathlib.Path().cwd()
 
@@ -41,7 +41,7 @@ def dropbox_list_files(podcast_path): # example podcast_path -> "/Podcast"
                 files_list.append(metadata)
 
         df = pd.DataFrame.from_records(files_list)
-        return df.sort_values(by='name', ascending=True)
+        return df.sort_values(by='name', ascending=False)
 
     except Exception as e:
         print(f'Error getting list of files from Dropbox: {str(e)}')
@@ -59,5 +59,24 @@ def dropbox_download_file(dropbox_file_path, local_file_path):
         print(f'Error downloading file from Dropbox: {str(e)}')
 
 
+###################################################################""
+# NEWS FUNCTIONS
+
+def get_new_podcasts(podcasts_path, latest_video_title):
+    all_podcasts = dropbox_list_files(podcasts_path)
+
+    if all_podcasts is None:
+        return []
+
+    new_podcasts = []
+    for podcast_name, podcast_path in zip(all_podcasts['name'], all_podcasts['path_display']):
+        if latest_video_title in podcast_name:
+            return new_podcasts
+        new_podcasts.append({'title': podcast_name, 'path': podcast_path})
+    
+    return new_podcasts
+
+
+
 if __name__ == '__main__':
-    print(dropbox_list_files("/Podcast"))
+    pprint(get_new_podcasts(os.getenv("PODCASTS_PATH"), "11 minutes pour trouver refuge en vous-même"))
