@@ -9,7 +9,7 @@ import socket
 from pprint import pprint
 from dotenv import load_dotenv
 
-load_dotenv("secrets/.env")
+load_dotenv(".env")
 
 socket.setdefaulttimeout(30000)
 

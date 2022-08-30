@@ -6,7 +6,7 @@ from dropbox.exceptions import AuthError
 from dotenv import load_dotenv
 from pprint import pprint
 
-load_dotenv("secrets/.env")
+load_dotenv(".env")
 
 BASE_DIR = pathlib.Path().cwd()
 
@@ -65,16 +65,14 @@ def dropbox_download_file(dropbox_file_path, local_file_path):
 def get_new_podcasts(podcasts_path, latest_video_title):
     all_podcasts = dropbox_list_files(podcasts_path)
 
-    new_podcasts = []
-
     if all_podcasts is None:
         return []
 
     new_podcasts = []
-    for i in range(len(all_podcasts)) :
-        if latest_video_title in all_podcasts.iloc[i,0]:
+    for podcast_name, podcast_path in zip(all_podcasts['name'], all_podcasts['path_display']):
+        if latest_video_title in podcast_name:
             return new_podcasts
-        new_podcasts.append({'title': all_podcasts.iloc[i,0], 'path': all_podcasts.iloc[i,1]})
+        new_podcasts.append({'title': podcast_name, 'path': podcast_path})
     
     return new_podcasts
 

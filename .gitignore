@@ -8,5 +8,5 @@ Output/
 Thumbnails/
 .venv
 .env
-secrets
-test.py
+secrets/
+src/test.py
