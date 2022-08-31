@@ -126,3 +126,14 @@ def draw_multiline_in_image(image_path, text, size_font=100, text_color=TEXT_COL
     image = Image.alpha_composite(image, overlay)
     image = image.convert("RGB")
     image.save("result.jpg")
+
+
+################################################
+# NEW FUNCTIONS
+
+def create_video(podcast):
+    #Download the podcast
+    #Download the videos
+    #Video montage
+    #Add audio in the video
+    pass
