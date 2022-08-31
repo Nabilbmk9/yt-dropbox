@@ -2,6 +2,7 @@ import os
 from google_auth_oauthlib.flow import InstalledAppFlow
 from datetime import datetime
 from pathlib import Path
+from helpers import from_yt_date_string_to_datetime
 from rss import *
 from googleapiclient.http import MediaFileUpload
 from google_apis import create_service
@@ -75,11 +76,11 @@ channel_response = get_channel_info()
 uploaded_playlist_id = channel_response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
 
 
-def retrieve_status_videos(video_id):
+def retrieve_status_video(video_id):
     response = service.videos().list(
         part='snippet,status,liveStreamingDetails',
         id=video_id,
-        maxResults=50
+        maxResults=1
     ).execute()
     items = response.get('items')
     return items
@@ -119,21 +120,13 @@ def get_latest_video_on_yt(playlist_id):
 
 def get_last_youtube_publication_date(last_video_id):
     today = datetime.now().replace(microsecond=0)
-    videos = retrieve_playlist_videos(uploaded_playlist_id)
-
-    for video_infos in videos:
-        videoId = video_infos['snippet']['resourceId']['videoId']
-        publish_at = retrieve_status_videos(videoId)[0]['status'].get('publishAt')
-        if publish_at is None:
-            return today
-        publish_at = list(publish_at)
-        publish_at = "".join(publish_at[:-1])
-        publish_at = list(publish_at)
-        publish_at = "".join(publish_at)
-        publish_at = datetime.fromisoformat(publish_at)
-        break
+    publish_at = retrieve_status_video(last_video_id)[0]['status'].get('publishAt')
+    if publish_at is None:
+        return today
+    publish_at = from_yt_date_string_to_datetime(publish_at)
     return publish_at
 
 
+
 if __name__ == '__main__':
-    pprint(retrieve_playlist_videos('UUlGxSM88UxJLZ43zdPocIIw'))
+    pprint(retrieve_status_video('EJ2-RCc6bg4'))

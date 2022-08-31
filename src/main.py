@@ -10,10 +10,10 @@ from youtube import *
 from helpers import *
 
 
-latest_video_title = get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID"))['title'] # -> "The latest video on youtube"
+latest_video = get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID")) # -> "The latest video on youtube"
 
 podcasts_path = os.environ.get("PODCASTS_PATH") # -> "/Podcast"
-new_podcasts = get_new_podcasts(podcasts_path, latest_video_title)
+new_podcasts = get_new_podcasts(podcasts_path, latest_video['title'])
 # -> new_podcasts = [{title: "Title", description: "", path: "/Podcast/title.mp3", tags: ["paix", "amour"], publication_date: ""}, {}, {}]
 
 for podcast in new_podcasts:
@@ -26,7 +26,7 @@ if new_podcasts == []:
 
 print(f"{len(new_podcasts)} new podcasts found...")
 
-last_youtube_publication_date = get_last_youtube_publication_date()
+last_youtube_publication_date = get_last_youtube_publication_date(latest_video['id']) # -> "The last youtube publication date"
 for podcast in new_podcasts:
     podcast['publication_date'] = last_youtube_publication_date
     last_youtube_publication_date = last_youtube_publication_date + timedelta(days=1)

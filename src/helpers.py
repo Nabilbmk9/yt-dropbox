@@ -37,3 +37,17 @@ def remove_html_tags(text):
     import re
     clean = re.compile('<.*?>')
     return re.sub(clean, '', text)
+
+
+def from_yt_date_string_to_datetime(yt_date_string):
+    """Convert a string to a datetime object"""
+    datetime_date = list(yt_date_string)
+    datetime_date = "".join(datetime_date[:-1])
+    datetime_date = list(datetime_date)
+    datetime_date = "".join(datetime_date)
+    datetime_date = datetime.fromisoformat(datetime_date)
+    return datetime_date
+
+
+if __name__ == '__main__':
+    print(from_yt_date_string_to_datetime("2022-09-20T22:00:00Z"))
