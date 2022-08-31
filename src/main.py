@@ -2,6 +2,7 @@ import time, random, os
 from datetime import datetime, timedelta
 from pathlib import Path
 import moviepy.editor as me
+from dotenv import load_dotenv
 
 from rss import *
 from dropbox_functions import *
@@ -9,6 +10,7 @@ from videos import *
 from youtube import *
 from helpers import *
 
+load_dotenv(".env")
 
 latest_video = get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID")) # -> "The latest video on youtube"
 
@@ -27,10 +29,12 @@ if new_podcasts == []:
 print(f"{len(new_podcasts)} new podcasts found...")
 
 last_youtube_publication_date = get_last_youtube_publication_date(latest_video['id']) # -> "The last youtube publication date"
+
+extra_day=0
 for podcast in new_podcasts:
-    podcast['publication_date'] = last_youtube_publication_date
-    last_youtube_publication_date = last_youtube_publication_date + timedelta(days=1)
-    # @todo : set hour of publication_date to 6:00AM (with an env variable)
+    extra_day += 1
+    publication_date = publish_time(last_youtube_publication_date + timedelta(days=extra_day), post_time_hour=int(os.getenv("POST_TIME_HOUR")))
+    podcast['publication_date'] = yt_format_date(publication_date)
 
 for new_podcast in new_podcasts:
     print(f"Processing {new_podcast.title}...")

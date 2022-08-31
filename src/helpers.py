@@ -2,17 +2,14 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 
-def publish_next_day_at_6(from_this_date):
-    """Donner une date en argument.
-        La fonction va retourner une date qui est le lendemain a 6h"""
-    date_de_publication = from_this_date + timedelta(days=1)
-    date_de_publication = datetime(date_de_publication.year,
-                                   date_de_publication.month,
-                                   date_de_publication.day,
-                                   date_de_publication.hour - date_de_publication.hour + 6,
-                                   date_de_publication.minute - date_de_publication.minute,
-                                   date_de_publication.second - date_de_publication.second)
-    return date_de_publication
+def publish_time(publication_date, post_time_hour=6, post_time_minute=0):
+    publication_date = datetime(publication_date.year,
+                                   publication_date.month,
+                                   publication_date.day,
+                                   publication_date.hour - publication_date.hour + post_time_hour,
+                                   publication_date.minute - publication_date.minute + post_time_minute,
+                                   publication_date.second - publication_date.second)
+    return publication_date
 
 
 def pending_podcasts(liste_podcast_dropbox, last_youtube_video_posted):
@@ -48,6 +45,10 @@ def from_yt_date_string_to_datetime(yt_date_string):
     datetime_date = datetime.fromisoformat(datetime_date)
     return datetime_date
 
+
+def yt_format_date(datetime_object):
+    """Convert a datetime object to a youtube string format"""
+    return f'{datetime.fromisoformat(str(datetime_object)).isoformat()}.000Z'
 
 if __name__ == '__main__':
     print(from_yt_date_string_to_datetime("2022-09-20T22:00:00Z"))
