@@ -17,8 +17,8 @@ new_podcasts = get_new_podcasts(podcasts_path, latest_video_title)
 # -> new_podcasts = [{title: "Title", description: "", path: "/Podcast/title.mp3", tags: ["paix", "amour"], publication_date: ""}, {}, {}]
 
 for podcast in new_podcasts:
-    podcast['description'] = get_description_from_rss(podcast['title']) 
-    podcast['tags'] = get_tags_from_rss(podcast['title'])
+    podcast['description'] = get_tags_and_description_from_rss(podcast['title'])[0]
+    podcast['tags'] = get_tags_and_description_from_rss(podcast['title'])[1]
 
 if new_podcasts == []:
     print("No new podcast")
