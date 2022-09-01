@@ -31,10 +31,8 @@ print(f"{len(new_podcasts)} new podcasts found...")
 
 last_youtube_publication_date = get_last_youtube_publication_date(latest_video['id']) # -> "The last youtube publication date"
 
-extra_day=0
-for podcast in new_podcasts:
-    extra_day += 1
-    publication_date = publish_time(last_youtube_publication_date + timedelta(days=extra_day), post_time_hour=int(os.getenv("POST_TIME_HOUR")))
+for extra_days, podcast in enumerate(new_podcasts, start=1):
+    publication_date = publish_time(last_youtube_publication_date + timedelta(days=extra_days), post_time_hour=int(os.getenv("POST_TIME_HOUR")))
     podcast['publication_date'] = yt_format_date(publication_date)
 
 for new_podcast in new_podcasts:
