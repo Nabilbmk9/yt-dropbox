@@ -38,6 +38,7 @@ for extra_days, podcast in enumerate(new_podcasts, start=1):
 for new_podcast in new_podcasts:
     print(f"Processing {new_podcast['title']}...")
     video_path = create_video(new_podcast)
+    exit()
     thumbnail_path = create_thumbnail(video_path, new_podcast)
     upload_video_to_youtube(video_path, thumbnail_path, new_podcast)
     delete_video_and_thumbnail(video_path, thumbnail_path)
