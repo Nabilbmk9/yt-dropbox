@@ -1,46 +1,30 @@
+import os
 import feedparser
 import ssl
 from pprint import pprint
 from pathlib import Path
+from dotenv import load_dotenv
 
+from helpers import remove_html_tags
+
+load_dotenv(".env")
 
 
 if hasattr(ssl, '_create_unverified_context'):
     ssl._create_default_https_context = ssl._create_unverified_context
 
-# Création d'une instance
-news_feed = feedparser.parse('https://feed.ausha.co/B6Ad3sAApEzX')
+news_feed = feedparser.parse(os.getenv('RSS_FEED_URL'))
 
-def tags_list_flux_rss():
-    """Retourne les tags du podcast se trouvant le dossier local "Podcast" """
-    for x in Path('Podcast').iterdir():
-        s = x.name
-    # Propriétés du flux
+def get_tags_and_description_from_rss(podcast_title):
     tags = []
-    for i in news_feed.entries:
-        if i['title'] in s:
-            pprint(i['title'])
-            for z in i['tags']:
-                if z['term'] is not None:
-                    tags.append(z['term'])
+    for entry in news_feed.entries:
+        if podcast_title in entry['title']:
+            description = entry['content'][0]['value']
+            description = remove_html_tags(description)
+            tags.extend(tag['term'] for tag in entry['tags'] if tag['term'] is not None)
             break
-    return tags
+    return description, tags
 
-
-def description_flux_rss():
-    """Retourne les tags du podcast se trouvant le dossier local "Podcast" """
-    for x in Path('Podcast').iterdir():
-        s = x.name
-    # Propriétés du flux
-    for i in news_feed.entries:
-        if i['title'] in s:
-            description = i['content'][0]['value']
-            if "<p>" in description:
-                description = description.replace("<p>", "")
-            if "</p>" in description:
-                description = description.replace("</p>", "")
-            break
-    return description
 
 if __name__ == '__main__':
-    print(description_flux_rss())
+    pprint(get_tags_and_description_from_rss("13 minutes pour se détendre sur une plage (vous êtes au bon endroit)"))

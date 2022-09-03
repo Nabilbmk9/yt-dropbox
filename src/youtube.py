@@ -2,7 +2,8 @@ import os
 from google_auth_oauthlib.flow import InstalledAppFlow
 from datetime import datetime
 from pathlib import Path
-from rss import tags_list_flux_rss, description_flux_rss
+from helpers import from_yt_date_string_to_datetime
+from rss import *
 from googleapiclient.http import MediaFileUpload
 from google_apis import create_service
 import socket
@@ -63,58 +64,9 @@ def telecharger_sur_youtube(date_de_publication, title_video, chemin_video_a_tel
     ).execute()
 
 
-def get_channel_info():
-    response = service.channels().list(
-        mine=True,
-        part='contentDetails'
-    ).execute()
-    return response
-
-
-channel_response = get_channel_info()
-uploaded_playlist_id = channel_response['items'][0]['contentDetails']['relatedPlaylists']['uploads']
-
-
-def retrieve_playlist_videos(playlist_id):
-    response = service.playlistItems().list(
-        part='snippet,status',
-        playlistId=playlist_id,
-        maxResults=1
-        ).execute()
-
-    return response.get('items')
-
-
-def retrieve_status_videos(video_id):
-    response = service.videos().list(
-        part='snippet,status,liveStreamingDetails',
-        id=video_id,
-        maxResults=50
-    ).execute()
-    items = response.get('items')
-    return items
-
-
-def retrieve_lastest_title_and_date_video():
-    today = datetime.now().replace(microsecond=0)
-    videos = retrieve_playlist_videos(uploaded_playlist_id)
-
-    for video_infos in videos:
-        videoId = video_infos['snippet']['resourceId']['videoId']
-        title_video = retrieve_status_videos(videoId)[0]['snippet'].get('title')
-        publish_at = retrieve_status_videos(videoId)[0]['status'].get('publishAt')
-        if publish_at is None:
-            return title_video, today
-        publish_at = list(publish_at)
-        publish_at = "".join(publish_at[:-1])
-        publish_at = list(publish_at)
-        publish_at = "".join(publish_at)
-        publish_at = datetime.fromisoformat(publish_at)
-        break
-    return title_video, publish_at
-
 ################################################################
-# NEWS FUNCTIONS
+# Updated function
+
 def get_latest_video_on_yt(playlist_id):
     response = service.playlistItems().list(
         part='snippet',
@@ -123,8 +75,28 @@ def get_latest_video_on_yt(playlist_id):
         ).execute()
     lastest_video = {'title': response['items'][0]['snippet']['title'],
                      'id': response['items'][0]['snippet']['resourceId']['videoId']}
-    return lastest_video    
-    
+    return lastest_video
+
+
+def _retrieve_status_video(video_id):
+    response = service.videos().list(
+        part='snippet,status,liveStreamingDetails',
+        id=video_id,
+        maxResults=1
+    ).execute()
+    items = response.get('items')
+    return items
+
+
+def get_last_youtube_publication_date(last_video_id):
+    today = datetime.now().replace(microsecond=0)
+    publish_at = _retrieve_status_video(last_video_id)[0]['status'].get('publishAt')
+    if publish_at is None:
+        return today
+    publish_at = from_yt_date_string_to_datetime(publish_at)
+    return publish_at
+
+
 
 if __name__ == '__main__':
-    pprint(get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID"))['title'])
+    pprint(_retrieve_status_video('EJ2-RCc6bg4'))
