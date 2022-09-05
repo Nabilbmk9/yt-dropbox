@@ -11,22 +11,16 @@ FONT = 'Oswald.ttf'
 
 
 def image_from_video(path_videoclip):
-    """ Télécharge l'image a 10 secondes de la video """
 
     clip = me.VideoFileClip(path_videoclip)
-    duration = clip.duration
-    max_duration = int(duration) + 1
-    for i in range(max_duration):
-        if i == 10:
-            print(f"frame at {i} seconds")
-            frame = clip.get_frame(int(i))
-            os.makedirs("Thumbnails", exist_ok=True)
-            new_img_filepath = "Thumbnails/thumb.jpg"
-            new_img = Image.fromarray(frame)
-            new_img = new_img.resize((1280, 720))
-            new_img.save(new_img_filepath)
-            clip.close()
-            return new_img_filepath
+    frame = clip.get_frame(5)
+    os.makedirs("Thumbnail", exist_ok=True)
+    new_img_filepath = "tmp/Thumbnail/thumb.jpg"
+    new_img = Image.fromarray(frame)
+    new_img = new_img.resize((1280, 720))
+    new_img.save(new_img_filepath)
+    clip.close()
+    return new_img_filepath
 
 
 def draw_multiline_in_image(image_path, text, size_font=100, text_color=TEXT_COLOR, text_start_height=200):
@@ -78,3 +72,11 @@ def draw_multiline_in_image(image_path, text, size_font=100, text_color=TEXT_COL
     image = Image.alpha_composite(image, overlay)
     image = image.convert("RGB")
     image.save("result.jpg")
+
+
+def create_thumbnail(video_path, text):
+    pass
+
+
+if __name__ == '__main__':
+    pass

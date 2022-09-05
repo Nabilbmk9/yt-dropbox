@@ -4,36 +4,15 @@ import moviepy.editor as me
 from pathlib import Path
 import time
 import progressbar
+from dotenv import load_dotenv
 
 from dropbox_functions import _dropbox_download_file, _dropbox_list_files
 
+load_dotenv(".env")
 BASE_DIR = Path().cwd()
 
 
-def ajouter_audio_sur_video(path_videoclip, path_audioclip, loop=False):
-    """Prend une video et ajoute le son.
-    Loop = False : La video se fige avec la derniere frame jusqu'a la fin de l'audio
-    Loop = True : La video tourne en boucle jusqu'a la fin de l'audio"""
 
-    nom_podcast = Path(path_audioclip).stem
-
-    videoclip = me.VideoFileClip(path_videoclip).without_audio()
-    audioclip = me.AudioFileClip(path_audioclip)
-
-    if loop:
-        concatenate = [videoclip, videoclip]
-        while videoclip.duration < audioclip.duration:
-            final = me.concatenate_videoclips(concatenate).crossfadein(1)
-            clip1 = me.VideoFileClip(path_videoclip)
-            concatenate.append(clip1)
-            videoclip = final
-
-    new_audioclip = me.CompositeAudioClip([audioclip])
-    videoclip.audio = new_audioclip
-    videoclip = videoclip.set_duration(audioclip.duration)
-    videoclip.write_videofile(f"Output/{nom_podcast}.mp4")
-    audioclip.close()
-    return f"Output/{nom_podcast}.mp4"
 
 
 
@@ -42,24 +21,24 @@ def ajouter_audio_sur_video(path_videoclip, path_audioclip, loop=False):
 ################################################
 # UPDATED FUNCTIONS
 
-def mix_video_list(dropbox_videos_path):
-    videos_list = _dropbox_list_files(dropbox_videos_path)['name']
-    random.shuffle(videos_list)
-    return videos_list
+def mixed_videos_list(dropbox_videos_path):
+    stock_videos = _dropbox_list_files(dropbox_videos_path)['name']
+    random.shuffle(stock_videos)
+    return stock_videos
 
 
-def type_of_video_by_keyword(podcast_title):
-    string_title_to_list = podcast_title.split()
+def find_keywords_in(podcast_title):
+    words_in_title = podcast_title.split()
     keyword_folders = {}
-    for keyword in string_title_to_list:
-        if keyword_folders.get(keyword) is not None:
-            return keyword_folders.get(keyword)
+    for word in words_in_title:
+        if keyword_folders.get(word) is not None:
+            return keyword_folders.get(word)
     return("Autre")
 
 
-def download_video_same_length_as_audio(audio_path, dropbox_videos_path):
+def dl_enough_videos_for(audio_path, dropbox_videos_path):
     audio_duration = me.AudioFileClip(audio_path).duration
-    videos_list = mix_video_list(dropbox_videos_path)
+    videos_list = mixed_videos_list(dropbox_videos_path)
     video_duration = 0
     print("Téléchargement des vidéos...")
     with progressbar.ProgressBar(max_value=audio_duration+100) as bar:
@@ -83,24 +62,42 @@ def video_editing(video_folder_path, video_title):
     return f"tmp/Output/{video_title}.mp4"
 
 
+def add_audio_on_video(path_videoclip, path_audioclip):
+    podcast_name = Path(path_audioclip).stem
+
+    videoclip = me.VideoFileClip(path_videoclip).without_audio()
+    audioclip = me.AudioFileClip(path_audioclip)
+
+    new_audioclip = me.CompositeAudioClip([audioclip])
+    videoclip.audio = new_audioclip
+    videoclip = videoclip.set_duration(audioclip.duration)
+    videoclip.write_videofile(f"tmp/Output/{podcast_name}.mp4")
+    audioclip.close()
+    return f"tmp/Output/{podcast_name}.mp4"
+
+
 def create_video(podcast):
     #Download the podcast
     os.makedirs("tmp/Podcast", exist_ok=True)
-    local_path = "tmp/Podcast/" + podcast['title'] + ".mp3"
-    _dropbox_download_file(podcast['path'], local_path)
+    local_podcast_path = "tmp/Podcast/" + podcast['title'] + ".mp3"
+    _dropbox_download_file(podcast['path'], local_podcast_path)
 
     #Download the videos
     os.makedirs("tmp/Videos", exist_ok=True)
-    dropbox_videos_path = f"/Video/{type_of_video_by_keyword(podcast['title'])}"
-    download_video_same_length_as_audio(local_path, dropbox_videos_path)
+    dropbox_videos_path = os.getenv("DROPBOX_VIDEO_PATH") + "/" + find_keywords_in(podcast['title'])
+    dl_enough_videos_for(local_podcast_path, dropbox_videos_path)
 
     #Video montage
     os.makedirs("tmp/Output", exist_ok=True)
-    video_editing("tmp/Videos", podcast['title'])
+    final_video_path = video_editing("tmp/Videos", podcast['title'])
 
     #Add audio in the video
-    
+    final_video_path = add_audio_on_video(final_video_path, local_podcast_path)
+
+    return final_video_path
 
 
 if __name__ == '__main__':
-    print(mix_video_list("/Video/Autre"))
+    podcast = {"title": "Test", "path": "/Podcasts/2020-10-01 - Test.mp3"}
+    dropbox_videos_path = os.getenv("DROPBOX_VIDEO_PATH") + "/" + find_keywords_in(podcast['title'])
+    print(dropbox_videos_path)
