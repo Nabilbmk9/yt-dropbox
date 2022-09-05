@@ -23,8 +23,9 @@ def pending_podcasts(liste_podcast_dropbox, last_youtube_video_posted):
     return iterator +1
 
 
-def delete_files_in_folder(list_folder):
-    for dossier in list_folder:
+def delete_tmp_files():
+    list_folders = ["tmp/Podcast", "tmp/Videos", "tmp/Thumbnail", "tmp/Output"]
+    for dossier in list_folders:
         for fichier in Path(dossier).iterdir():
             Path(fichier).unlink()
 
@@ -51,4 +52,4 @@ def yt_format_date(datetime_object):
     return f'{datetime.fromisoformat(str(datetime_object)).isoformat()}.000Z'
 
 if __name__ == '__main__':
-    print(from_yt_date_string_to_datetime("2022-09-20T22:00:00Z"))
+    delete_tmp_files()

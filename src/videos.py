@@ -52,14 +52,14 @@ def dl_enough_videos_for(audio_path, dropbox_videos_path):
                 return
 
 
-def video_editing(video_folder_path, video_title):
+def edit_final_video(video_folder_path, video_title):
     clip = []
     for video_file in Path(video_folder_path).iterdir():
         clip.append(me.VideoFileClip(f"{video_file.parent}/{video_file.name}", audio=False, target_resolution=(720, 1280)).crossfadein(1))
 
     final_clip = me.concatenate(clip, padding=-1, method="compose")
     final_clip.write_videofile(f"tmp/Output/{video_title}.mp4")
-    return f"tmp/Output/{video_title}.mp4"
+    return f"tmp/Output/_{video_title}.mp4"
 
 
 def add_audio_on_video(path_videoclip, path_audioclip):
@@ -89,7 +89,7 @@ def create_video(podcast):
 
     #Video montage
     os.makedirs("tmp/Output", exist_ok=True)
-    final_video_path = video_editing("tmp/Videos", podcast['title'])
+    final_video_path = edit_final_video("tmp/Videos", podcast['title'])
 
     #Add audio in the video
     final_video_path = add_audio_on_video(final_video_path, local_podcast_path)

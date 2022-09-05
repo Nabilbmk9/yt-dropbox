@@ -36,14 +36,16 @@ for extra_days, podcast in enumerate(new_podcasts, start=1):
     publication_date = publish_time(last_youtube_publication_date + timedelta(days=extra_days), post_time_hour=int(os.getenv("POST_TIME_HOUR")))
     podcast['publication_date'] = yt_format_date(publication_date)
 
+pprint(new_podcasts)
+exit()
 for new_podcast in new_podcasts:
     print(f"Processing {new_podcast['title']}...")
     video_path = create_video(new_podcast)
     thumbnail_path = create_thumbnail(video_path, new_podcast['title'])
-    exit()
-    upload_video_to_youtube(video_path, thumbnail_path, new_podcast)
-    delete_video_and_thumbnail(video_path, thumbnail_path)
+    upload_video_to_youtube(new_podcast, thumbnail_path, video_path)
+    delete_tmp_files()
     print(f"{new_podcast} processed")
+    exit()
 
-
+time.sleep(120)
 

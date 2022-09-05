@@ -10,6 +10,8 @@ import socket
 from pprint import pprint
 from dotenv import load_dotenv
 
+from thumbnail import create_thumbnail
+
 load_dotenv(".env")
 
 socket.setdefaulttimeout(30000)
@@ -25,15 +27,13 @@ SCOPES = ['https://www.googleapis.com/auth/youtube.upload',
 service = create_service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 
 
-def telecharger_sur_youtube(date_de_publication, title_video, chemin_video_a_telecharger):
-    """ Télécharge une video sur youtube"""
+def upload_video_to_youtube(video_info, video_path, thumbnail_path):
     service = create_service(CLIENT_SECRET_FILE, API_NAME, API_VERSION, SCOPES)
 
-    upload_date_time = f'{datetime.fromisoformat(str(date_de_publication)).isoformat()}.000Z'
-
-    description = description_flux_rss()
-
-    tags = tags_list_flux_rss()
+    title_video = video_info['title']
+    upload_date_time = video_info['publication_date']
+    description = video_info['description']
+    tags = video_info['tags']
 
     request_body = {
         'snippet': {
@@ -50,22 +50,17 @@ def telecharger_sur_youtube(date_de_publication, title_video, chemin_video_a_tel
         'notifySubscribers': False
     }
 
-    mediaFile = MediaFileUpload(chemin_video_a_telecharger)
-
     response_upload = service.videos().insert(
         part='snippet,status',
         body=request_body,
-        media_body=mediaFile
+        media_body=MediaFileUpload(video_path)
     ).execute()
 
     service.thumbnails().set(
         videoId=response_upload.get('id'),
-        media_body=MediaFileUpload("Thumbnails/thumb.jpg")
+        media_body=MediaFileUpload(thumbnail_path)
     ).execute()
 
-
-################################################################
-# Updated function
 
 def get_latest_video_on_yt(playlist_id):
     response = service.playlistItems().list(
@@ -95,8 +90,3 @@ def get_last_youtube_publication_date(last_video_id):
         return today
     publish_at = from_yt_date_string_to_datetime(publish_at)
     return publish_at
-
-
-
-if __name__ == '__main__':
-    pprint(_retrieve_status_video('EJ2-RCc6bg4'))

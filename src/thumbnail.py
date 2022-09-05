@@ -2,19 +2,20 @@ import os
 import moviepy.editor as me
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import textwrap
+from dotenv import load_dotenv
+
+load_dotenv(".env")
 
 # Parameter for thumbnail
-BACKGROUND_TINT_COLOR = (0, 0, 0)  # Black
-TRANSPARENCY = .40  # Degree of transparency, 0-100%
 TEXT_COLOR = (255, 255, 255)  # White
-FONT = 'Oswald.ttf'
+FONT = 'assets/' + str(os.getenv('CHARACTERE_FONT'))
 
+print(FONT)
 
 def image_from_video(path_videoclip):
-
     clip = me.VideoFileClip(path_videoclip)
     frame = clip.get_frame(5)
-    os.makedirs("Thumbnail", exist_ok=True)
+    os.makedirs("tmp/Thumbnail", exist_ok=True)
     new_img_filepath = "tmp/Thumbnail/thumb.jpg"
     new_img = Image.fromarray(frame)
     new_img = new_img.resize((1280, 720))
@@ -23,11 +24,8 @@ def image_from_video(path_videoclip):
     return new_img_filepath
 
 
-def draw_multiline_in_image(image_path, text, size_font=100, text_color=TEXT_COLOR, text_start_height=200):
-    OPACITY = int(255 * TRANSPARENCY)
-    print(len(text))
-    image = Image.open(image_path)
-    image = image.convert("RGBA")
+def draw_multiline_in_image(image_path, text, text_color=TEXT_COLOR, text_start_height=200):
+    
 
     # Font size according to the number of characters
     if len(text) < 40:
@@ -39,10 +37,14 @@ def draw_multiline_in_image(image_path, text, size_font=100, text_color=TEXT_COL
     else:
         size_font = 85
 
+    image = Image.open(image_path)
+    image = image.convert("RGBA")
+
     font = ImageFont.truetype(FONT, size_font)
     image_width, image_height = image.size
     y_text = text_start_height
 
+    
     width_text = 1
     size_width_text = 0
     while size_width_text < 1000:
@@ -50,7 +52,7 @@ def draw_multiline_in_image(image_path, text, size_font=100, text_color=TEXT_COL
         lines = textwrap.wrap(text.upper(), width=width_text)
         size_width_text = font.getsize(lines[0])[0]
 
-    overlay = Image.new('RGBA', image.size, BACKGROUND_TINT_COLOR + (0,))
+    overlay = Image.new('RGBA', image.size)
     for line in lines:
         line_width, line_height = font.getsize(line)
 
@@ -71,12 +73,67 @@ def draw_multiline_in_image(image_path, text, size_font=100, text_color=TEXT_COL
         y_text += line_height
     image = Image.alpha_composite(image, overlay)
     image = image.convert("RGB")
-    image.save("result.jpg")
+    image.save(image_path)
+    return image_path
 
 
 def create_thumbnail(video_path, text):
-    pass
+    image = image_from_video(video_path)
+    return draw_multiline_in_image(image, text)
 
 
-if __name__ == '__main__':
-    pass
+######################################################################################
+# The functions below are being modified
+
+def overlay_text(image, text):
+    image = Image.open(image)
+    image = image.convert("RGBA")
+    overlay = Image.new('RGBA', image.size)
+    draw = ImageDraw.Draw(overlay)
+    image_width, image_height = image.size
+    y_text = 200
+    lines = textwrap.wrap(text, width=40)
+    font = ImageFont.truetype(FONT, 80)
+    for line in lines:
+        line_width, line_height = font.getsize(line)
+        draw.text(((image_width - line_width) / 2, y_text), 
+                  line, font=font, fill=(0,0,0))
+        y_text += line_height
+    blurred = overlay.filter(ImageFilter.BoxBlur(7))
+    blurred = Image.alpha_composite(image, blurred)
+    blurred = blurred.convert("RGB")
+    blurred.save("result_blurred.jpg")
+
+
+def draw_multiple_line_text(image_path, text, font=ImageFont.truetype(FONT, 80), text_color=TEXT_COLOR, text_start_height=200):
+
+    image = Image.open(image_path)
+    draw = ImageDraw.Draw(image)
+    image_width, image_height = image.size
+    y_text = text_start_height
+    lines = textwrap.wrap(text, width=40)
+    for line in lines:
+        line_width, line_height = font.getsize(line)
+        draw.text(((image_width - line_width) / 2, y_text), 
+                  line, font=font, fill=text_color)
+        y_text += line_height
+    image.save("result.jpg")
+
+
+
+
+
+if __name__ == "__main__":
+    path = image_from_video(r"C:\Users\boulm\Downloads\Grasssss - 66810 s(1s)s.mp4")
+    draw_multiline_in_image(path, "Bonjour la famile ceci est un test pour voir si ça marche bien")
+   
+
+
+
+
+
+
+
+
+
+
