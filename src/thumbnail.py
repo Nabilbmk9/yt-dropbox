@@ -8,7 +8,7 @@ load_dotenv(".env")
 
 # Parameter for thumbnail
 TEXT_COLOR = (255, 255, 255)  # White
-FONT = 'assets/' + str(os.getenv('CHARACTERE_FONT'))
+FONT = 'assets/' + str(os.getenv('CHARACTER_FONT'))
 
 print(FONT)
 

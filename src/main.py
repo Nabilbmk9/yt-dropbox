@@ -43,7 +43,7 @@ for new_podcast in new_podcasts:
     upload_video_to_youtube(new_podcast, thumbnail_path, video_path)
     delete_tmp_files()
     print(f"{new_podcast} processed")
-    exit()
+
 
 time.sleep(120)
 
