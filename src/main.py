@@ -36,8 +36,6 @@ for extra_days, podcast in enumerate(new_podcasts, start=1):
     publication_date = publish_time(last_youtube_publication_date + timedelta(days=extra_days), post_time_hour=int(os.getenv("POST_TIME_HOUR")))
     podcast['publication_date'] = yt_format_date(publication_date)
 
-pprint(new_podcasts)
-exit()
 for new_podcast in new_podcasts:
     print(f"Processing {new_podcast['title']}...")
     video_path = create_video(new_podcast)

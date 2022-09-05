@@ -12,17 +12,6 @@ def publish_time(publication_date, post_time_hour=6, post_time_minute=0):
     return publication_date
 
 
-def pending_podcasts(liste_podcast_dropbox, last_youtube_video_posted):
-    """Donner en argument, la liste de podcast disponible sur dropbox et la derniere video youtube
-        Retourne l'indice du dernier podcast posté sur youtube"""
-    if liste_podcast_dropbox is None:
-        return 0
-    for iterator, nom_podcast in enumerate(liste_podcast_dropbox['name']):
-        if last_youtube_video_posted in nom_podcast:
-            return iterator
-    return iterator +1
-
-
 def delete_tmp_files():
     list_folders = ["tmp/Podcast", "tmp/Videos", "tmp/Thumbnail", "tmp/Output"]
     for dossier in list_folders:
