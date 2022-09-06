@@ -11,7 +11,14 @@ load_dotenv(".env")
 BASE_DIR = pathlib.Path().cwd()
 
 
-def dropbox_connect():
+
+
+
+###################################################################""
+# updated FUNCTIONS
+
+
+def _dropbox_connect():
     """Create a connection to Dropbox."""
     try:
         dbx = dropbox.Dropbox(app_key=os.environ.get("app_key"),
@@ -22,13 +29,11 @@ def dropbox_connect():
     return dbx
 
 
-def dropbox_list_files(podcast_path): # example podcast_path -> "/Podcast"
+def _dropbox_list_files(folder_path): # example podcast_path -> "/Podcast"
     """Return a Pandas dataframe of files in a given Dropbox folder path in the Apps directory."""
-
-    dbx = dropbox_connect()
-
+    dbx = _dropbox_connect()
     try:
-        files = dbx.files_list_folder(podcast_path).entries
+        files = dbx.files_list_folder(folder_path).entries
         files_list = []
         for file in files:
             if isinstance(file, dropbox.files.FileMetadata):
@@ -47,11 +52,10 @@ def dropbox_list_files(podcast_path): # example podcast_path -> "/Podcast"
         print(f'Error getting list of files from Dropbox: {str(e)}')
 
 
-def dropbox_download_file(dropbox_file_path, local_file_path):
+def _dropbox_download_file(dropbox_file_path, local_file_path):
     """Download a file from Dropbox to the local machine."""
-
     try:
-        dbx = dropbox_connect()
+        dbx = _dropbox_connect()
         with open(local_file_path, 'wb') as f:
             metadata, result = dbx.files_download(path=dropbox_file_path)
             f.write(result.content)
@@ -59,12 +63,8 @@ def dropbox_download_file(dropbox_file_path, local_file_path):
         print(f'Error downloading file from Dropbox: {str(e)}')
 
 
-###################################################################""
-# NEWS FUNCTIONS
-
 def get_new_podcasts(podcasts_path, latest_video_title):
-    all_podcasts = dropbox_list_files(podcasts_path)
-
+    all_podcasts = _dropbox_list_files(podcasts_path)
     if all_podcasts is None:
         return []
 
@@ -79,4 +79,4 @@ def get_new_podcasts(podcasts_path, latest_video_title):
 
 
 if __name__ == '__main__':
-    pprint(get_new_podcasts(os.getenv("PODCASTS_PATH"), "11 minutes pour trouver refuge en vous-même"))
+    _dropbox_download_file("/Video/Autre/sssssss.mp4", "yo.mp4")

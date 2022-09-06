@@ -12,19 +12,9 @@ def publish_time(publication_date, post_time_hour=6, post_time_minute=0):
     return publication_date
 
 
-def pending_podcasts(liste_podcast_dropbox, last_youtube_video_posted):
-    """Donner en argument, la liste de podcast disponible sur dropbox et la derniere video youtube
-        Retourne l'indice du dernier podcast posté sur youtube"""
-    if liste_podcast_dropbox is None:
-        return 0
-    for iterator, nom_podcast in enumerate(liste_podcast_dropbox['name']):
-        if last_youtube_video_posted in nom_podcast:
-            return iterator
-    return iterator +1
-
-
-def delete_files_in_folder(list_folder):
-    for dossier in list_folder:
+def delete_tmp_files():
+    list_folders = ["tmp/Podcast", "tmp/Videos", "tmp/Thumbnail", "tmp/Output"]
+    for dossier in list_folders:
         for fichier in Path(dossier).iterdir():
             Path(fichier).unlink()
 
@@ -51,4 +41,4 @@ def yt_format_date(datetime_object):
     return f'{datetime.fromisoformat(str(datetime_object)).isoformat()}.000Z'
 
 if __name__ == '__main__':
-    print(from_yt_date_string_to_datetime("2022-09-20T22:00:00Z"))
+    delete_tmp_files()

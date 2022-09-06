@@ -2,7 +2,6 @@ import os
 import feedparser
 import ssl
 from pprint import pprint
-from pathlib import Path
 from dotenv import load_dotenv
 
 from helpers import remove_html_tags

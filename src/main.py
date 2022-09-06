@@ -9,6 +9,7 @@ from dropbox_functions import *
 from videos import *
 from youtube import *
 from helpers import *
+from thumbnail import *
 
 load_dotenv(".env")
 
@@ -38,8 +39,11 @@ for extra_days, podcast in enumerate(new_podcasts, start=1):
 for new_podcast in new_podcasts:
     print(f"Processing {new_podcast['title']}...")
     video_path = create_video(new_podcast)
-    thumbnail_path = create_thumbnail(video_path, new_podcast)
-    upload_video_to_youtube(video_path, thumbnail_path, new_podcast)
-    delete_video_and_thumbnail(video_path, thumbnail_path)
+    thumbnail_path = create_thumbnail(video_path, new_podcast['title'])
+    upload_video_to_youtube(new_podcast, thumbnail_path, video_path)
+    delete_tmp_files()
     print(f"{new_podcast} processed")
+
+
+time.sleep(120)
 
