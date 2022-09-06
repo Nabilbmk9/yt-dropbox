@@ -55,16 +55,3 @@ def draw_text_on_image(image, text, font=ImageFont.truetype(FONT, 80), text_colo
         draw.text(((image_width - line_width) / 2, y_text), 
                   line, font=font, fill=text_color)
         y_text += line_height
-
-
-   
-
-
-
-
-
-
-
-
-
-
