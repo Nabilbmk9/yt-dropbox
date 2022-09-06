@@ -11,16 +11,6 @@ from dropbox_functions import _dropbox_download_file, _dropbox_list_files
 load_dotenv(".env")
 BASE_DIR = Path().cwd()
 
-
-
-
-
-
-
-
-################################################
-# UPDATED FUNCTIONS
-
 def mixed_videos_list(dropbox_videos_path):
     stock_videos = _dropbox_list_files(dropbox_videos_path)['name']
     random.shuffle(stock_videos)

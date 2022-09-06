@@ -46,6 +46,10 @@ def draw_text_with_shadow_on_image(image, text):
 
 def draw_text_on_image(image, text, font=ImageFont.truetype(FONT, 80), text_color=TEXT_COLOR, text_start_height=200):
 
+    font_size_raw = 160 - len(text)
+    font_size = max(80, min(120, font_size_raw))
+    font = ImageFont.truetype(FONT, font_size)
+
     draw = ImageDraw.Draw(image)
     image_width, image_height = image.size
     y_text = text_start_height
