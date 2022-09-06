@@ -39,6 +39,3 @@ def from_yt_date_string_to_datetime(yt_date_string):
 def yt_format_date(datetime_object):
     """Convert a datetime object to a youtube string format"""
     return f'{datetime.fromisoformat(str(datetime_object)).isoformat()}.000Z'
-
-if __name__ == '__main__':
-    delete_tmp_files()

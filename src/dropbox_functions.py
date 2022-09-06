@@ -11,13 +11,6 @@ load_dotenv(".env")
 BASE_DIR = pathlib.Path().cwd()
 
 
-
-
-
-###################################################################""
-# updated FUNCTIONS
-
-
 def _dropbox_connect():
     """Create a connection to Dropbox."""
     try:
@@ -75,8 +68,3 @@ def get_new_podcasts(podcasts_path, latest_video_title):
         new_podcasts.append({'title': podcast_name.split('- ')[1].split(".")[0], 'path': podcast_path})
     
     return new_podcasts
-
-
-
-if __name__ == '__main__':
-    _dropbox_download_file("/Video/Autre/sssssss.mp4", "yo.mp4")

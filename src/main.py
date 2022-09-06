@@ -44,6 +44,4 @@ for new_podcast in new_podcasts:
     delete_tmp_files()
     print(f"{new_podcast} processed")
 
-
 time.sleep(120)
-

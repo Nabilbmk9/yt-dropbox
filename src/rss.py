@@ -8,7 +8,6 @@ from helpers import remove_html_tags
 
 load_dotenv(".env")
 
-
 if hasattr(ssl, '_create_unverified_context'):
     ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -23,7 +22,3 @@ def get_tags_and_description_from_rss(podcast_title):
             tags.extend(tag['term'] for tag in entry['tags'] if tag['term'] is not None)
             break
     return description, tags
-
-
-if __name__ == '__main__':
-    pprint(get_tags_and_description_from_rss("13 minutes pour se détendre sur une plage (vous êtes au bon endroit)"))
