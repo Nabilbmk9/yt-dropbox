@@ -2,11 +2,8 @@
 __pycache__/
 token files/
 code_secret_client_youtube.json
-Video/
-Podcast/
-Output/
-Thumbnails/
 .venv
 .env
 secrets/
 src/test.py
+tmp

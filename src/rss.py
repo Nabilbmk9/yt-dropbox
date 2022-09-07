@@ -13,12 +13,11 @@ if hasattr(ssl, '_create_unverified_context'):
 
 news_feed = feedparser.parse(os.getenv('RSS_FEED_URL'))
 
-def get_tags_and_description_from_rss(podcast_title):
-    tags = []
+def get_tags_and_description_from_rss(podcast_title):   
     for entry in news_feed.entries:
-        if podcast_title in entry['title']:
-            description = entry['content'][0]['value']
-            description = remove_html_tags(description)
-            tags.extend(tag['term'] for tag in entry['tags'] if tag['term'] is not None)
+        tags = []
+        description = ""
+        if podcast_title in entry.title:
+            description = entry.summary
             break
-    return description, tags
+    return description, tags 

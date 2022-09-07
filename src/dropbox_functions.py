@@ -14,9 +14,9 @@ BASE_DIR = pathlib.Path().cwd()
 def _dropbox_connect():
     """Create a connection to Dropbox."""
     try:
-        dbx = dropbox.Dropbox(app_key=os.environ.get("app_key"),
-                              app_secret=os.environ.get("app_secret"),
-                              oauth2_refresh_token=os.environ.get("oauth2_refresh_token"))
+        dbx = dropbox.Dropbox(app_key=os.environ.get("APP_KEY"),
+                              app_secret=os.environ.get("APP_SECRET"),
+                              oauth2_refresh_token=os.environ.get("OAUTH2_REFRESH_TOKEN"))
     except AuthError as e:
         print(f'Error connecting to Dropbox with access token: {str(e)}')
     return dbx
@@ -25,10 +25,10 @@ def _dropbox_connect():
 def _dropbox_list_files(folder_path): # example podcast_path -> "/Podcast"
     """Return a Pandas dataframe of files in a given Dropbox folder path in the Apps directory."""
     dbx = _dropbox_connect()
+    files_list = []
     try:
-        files = dbx.files_list_folder(folder_path).entries
-        files_list = []
-        for file in files:
+        files_list_folder = dbx.files_list_folder(folder_path)
+        for file in files_list_folder.entries:
             if isinstance(file, dropbox.files.FileMetadata):
                 metadata = {
                     'name': file.name,
@@ -37,6 +37,18 @@ def _dropbox_list_files(folder_path): # example podcast_path -> "/Podcast"
                     'server_modified': file.server_modified
                 }
                 files_list.append(metadata)
+        
+        while files_list_folder.has_more:
+            files_list_folder = dbx.files_list_folder_continue(files_list_folder.cursor)
+            for file in files_list_folder.entries:
+                if isinstance(file, dropbox.files.FileMetadata):
+                    metadata = {
+                        'name': file.name,
+                        'path_display': file.path_display,
+                        'client_modified': file.client_modified,
+                        'server_modified': file.server_modified
+                    }
+                    files_list.append(metadata)
 
         df = pd.DataFrame.from_records(files_list)
         return df.sort_values(by='name', ascending=False)

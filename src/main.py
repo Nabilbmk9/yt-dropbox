@@ -30,6 +30,12 @@ if new_podcasts == []:
 
 print(f"{len(new_podcasts)} new podcasts found...")
 
+# DEBUG : Print List
+for podcast in new_podcasts:
+    print(podcast['title'])
+
+new_podcasts.reverse()
+
 last_youtube_publication_date = get_last_youtube_publication_date(latest_video['id']) # -> "The last youtube publication date"
 
 for extra_days, podcast in enumerate(new_podcasts, start=1):
@@ -40,8 +46,6 @@ for new_podcast in new_podcasts:
     print(f"Processing {new_podcast['title']}...")
     video_path = create_video(new_podcast)
     thumbnail_path = create_thumbnail(video_path, new_podcast['title'])
-    upload_video_to_youtube(new_podcast, thumbnail_path, video_path)
+    upload_video_to_youtube(new_podcast, video_path, thumbnail_path)
     delete_tmp_files()
     print(f"{new_podcast} processed")
-
-time.sleep(120)
