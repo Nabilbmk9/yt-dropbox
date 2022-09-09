@@ -72,11 +72,12 @@ def get_new_podcasts(podcasts_path, latest_video_title):
     all_podcasts = _dropbox_list_files(podcasts_path)
     if all_podcasts is None:
         return []
-
+    all_podcasts = all_podcasts[all_podcasts['name'].str.endswith('.mp3')]
+    
     new_podcasts = []
     for podcast_name, podcast_path in zip(all_podcasts['name'], all_podcasts['path_display']):
         if latest_video_title in podcast_name:
             return new_podcasts
-        new_podcasts.append({'title': podcast_name.split('- ')[1].split(".")[0], 'path': podcast_path})
+        new_podcasts.append({'title': podcast_name.split(" - ", 1)[1].split(".", 1)[0], 'path': podcast_path})
     
     return new_podcasts

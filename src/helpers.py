@@ -39,3 +39,12 @@ def from_yt_date_string_to_datetime(yt_date_string):
 def yt_format_date(datetime_object):
     """Convert a datetime object to a youtube string format"""
     return f'{datetime.fromisoformat(str(datetime_object)).isoformat()}.000Z'
+
+def handle_arguments():
+    """Handle arguments"""
+    import sys
+    if len(sys.argv) > 1 and sys.argv[1] == "clean":
+        print("Cleaning tmp folder...")
+        delete_tmp_files()
+        print("Done.")
+        exit()

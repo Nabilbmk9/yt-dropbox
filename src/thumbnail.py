@@ -48,13 +48,12 @@ def adjust_font_size_to_size_text(text):
 
 
 def set_lines(font, text):
-    # @todo : refactor this function
-    width = 50
-    lines = textwrap.wrap(text, width=width)
-    while font.getsize(lines[0])[0]>1240:
-        width -= 1
-        lines = textwrap.wrap(text, width=width)
+    width = 60
+    lines = textwrap.wrap(text, width)
 
+    while any(font.getsize(line)[0] > 1240 for line in lines):
+        lines = textwrap.wrap(text, width)
+        width -= 1
     return lines
 
 def draw_text_with_shadow_on_image(image, text):

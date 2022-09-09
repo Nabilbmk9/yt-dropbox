@@ -57,7 +57,9 @@ def dl_enough_videos_for(audio_path, dropbox_videos_path):
 def edit_final_video(video_folder_path, video_title):
     clips = []
     for video_file in Path(video_folder_path).iterdir():
-        clips.append(me.VideoFileClip(f"{video_file.parent}/{video_file.name}", audio=False, target_resolution=(720, 1280)).crossfadein(1))
+        if video_file.name.startswith("."):
+            continue
+        clips.append(me.VideoFileClip(f"{video_file.parent}/{video_file.name}", audio=False, target_resolution=(1080, 1920)).crossfadein(1))
 
     final_clip = me.concatenate_videoclips(clips, padding=-1, method="compose")
     final_clip.write_videofile(f"tmp/Output/_{video_title}.mp4")

@@ -7,17 +7,20 @@ from dotenv import load_dotenv
 from rss import *
 from dropbox_functions import *
 from videos import *
-from youtube import *
 from helpers import *
 from thumbnail import *
 
 load_dotenv(".env")
+handle_arguments()
 
-latest_video = get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID")) # -> "The latest video on youtube"
+from youtube import *
 
-podcasts_path = os.environ.get("PODCASTS_PATH") # -> "/Podcast"
+latest_video = get_latest_video_on_yt(os.getenv("YT_PLAYLIST_ID"))
+last_youtube_publication_date = get_last_youtube_publication_date(latest_video['id'])
+print(f"Last youtube publication date: {last_youtube_publication_date}")
+
+podcasts_path = os.environ.get("PODCASTS_PATH")
 new_podcasts = get_new_podcasts(podcasts_path, latest_video['title'])
-# -> new_podcasts = [{title: "Title", description: "", path: "/Podcast/title.mp3", tags: ["paix", "amour"], publication_date: ""}, {}, {}]
 
 for podcast in new_podcasts:
     tags_and_descriptions = get_tags_and_description_from_rss(podcast['title'])
@@ -30,13 +33,10 @@ if new_podcasts == []:
 
 print(f"{len(new_podcasts)} new podcasts found...")
 
-# DEBUG : Print List
-for podcast in new_podcasts:
-    print(podcast['title'])
-
+print("In queue:")
 new_podcasts.reverse()
-
-last_youtube_publication_date = get_last_youtube_publication_date(latest_video['id']) # -> "The last youtube publication date"
+for i, podcast in enumerate(new_podcasts, start=1):
+    print(f"{i} - {podcast['title']}")
 
 for extra_days, podcast in enumerate(new_podcasts, start=1):
     publication_date = publish_time(last_youtube_publication_date + timedelta(days=extra_days), post_time_hour=int(os.getenv("POST_TIME_HOUR")))
@@ -47,5 +47,5 @@ for new_podcast in new_podcasts:
     video_path = create_video(new_podcast)
     thumbnail_path = create_thumbnail(video_path, new_podcast['title'])
     upload_video_to_youtube(new_podcast, video_path, thumbnail_path)
-    delete_tmp_files()
     print(f"{new_podcast} processed")
+    delete_tmp_files()
